@@ -741,15 +741,50 @@ add_action('admin_head', function() {
         /* -------------------------------------------------------------------------
            LEFT SIDEBAR CYBER-PRECISION REDESIGN (#adminmenu)
            ------------------------------------------------------------------------- */
-        #adminmenuback, #adminmenuwrap, #adminmenu {
+        /* -------------------------------------------------------------------------
+           LEFT SIDEBAR CYBER-PRECISION REDESIGN (#adminmenu)
+           ------------------------------------------------------------------------- */
+        #adminmenuback, #adminmenuwrap {
+            position: fixed !important;
+            top: 54px !important;
+            left: 0 !important;
+            bottom: 0 !important;
             width: 260px !important;
-            background: #0b0f19 !important;
-            transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            height: calc(100vh - 54px) !important;
+            z-index: 9990 !important;
         }
 
         #adminmenuwrap {
+            background: #0b0f19 !important;
             border-right: 2px solid #1e293b !important;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            scrollbar-width: thin;
+            scrollbar-color: #334155 #0b0f19;
+        }
+
+        /* Cyber-precision sleek scrollbar for sidebar nav */
+        #adminmenuwrap::-webkit-scrollbar {
+            width: 5px !important;
+        }
+        #adminmenuwrap::-webkit-scrollbar-track {
+            background: #0b0f19 !important;
+        }
+        #adminmenuwrap::-webkit-scrollbar-thumb {
+            background: #1e293b !important;
+        }
+        #adminmenuwrap::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8 !important;
+        }
+
+        #adminmenu {
+            width: 260px !important;
+            background: #0b0f19 !important;
+            margin-top: 0 !important;
+            padding: 0 0 40px 0 !important;
+            transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         .fuse-sidebar-brand {
@@ -767,6 +802,9 @@ add_action('admin_head', function() {
             white-space: nowrap;
             overflow: hidden;
             background: #0f172a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .fuse-sidebar-brand-dot {
@@ -776,11 +814,6 @@ add_action('admin_head', function() {
             background: #38bdf8;
             border-radius: 0 !important;
             box-shadow: 0 0 10px #38bdf8;
-        }
-
-        #adminmenu {
-            margin-top: 0 !important;
-            padding: 0 0 20px 0 !important;
         }
 
         #adminmenu li.menu-top {
@@ -826,15 +859,22 @@ add_action('admin_head', function() {
         #adminmenu li.menu-top.current > a,
         #adminmenu li.menu-top.wp-has-current-submenu > a,
         #adminmenu li.menu-top.wp-menu-open > a {
-            background: linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.3) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
             color: #ffffff !important;
             font-weight: 700 !important;
             letter-spacing: 0.5px !important;
             border-left: 4px solid #38bdf8 !important;
             border-right: 3px solid #2563eb !important;
-            border-top: 1px solid rgba(56, 189, 248, 0.2) !important;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.2) !important;
-            box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.05) !important;
+            border-top: 1px solid rgba(56, 189, 248, 0.25) !important;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25) !important;
+            box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.08) !important;
+        }
+
+        #adminmenu li.menu-top.current > a div.wp-menu-image,
+        #adminmenu li.menu-top.wp-has-current-submenu > a div.wp-menu-image,
+        #adminmenu li.menu-top.wp-menu-open > a div.wp-menu-image {
+            color: #38bdf8 !important;
+            opacity: 1 !important;
         }
 
         #adminmenu div.wp-menu-image {
@@ -886,29 +926,29 @@ add_action('admin_head', function() {
             transition: all 0.15s ease !important;
         }
 
+        /* Active Submenu Link Highlighting */
         #adminmenu li.wp-has-current-submenu .wp-submenu a:hover,
-        #adminmenu li.wp-has-current-submenu .wp-submenu li.current a {
-            background: rgba(56, 189, 248, 0.1) !important;
+        #adminmenu li.wp-has-current-submenu .wp-submenu li.current a,
+        #adminmenu li.wp-menu-open .wp-submenu li.current a,
+        #adminmenu .wp-submenu a.current,
+        #adminmenu .wp-submenu a[aria-current="page"] {
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.2) 0%, rgba(15, 23, 42, 0.6) 100%) !important;
             border-left-color: #38bdf8 !important;
             color: #38bdf8 !important;
             font-weight: 700 !important;
+            box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.1) !important;
         }
 
-        /* Hover Submenu for closed items */
+        /* Hover Submenu for closed items (handled with fixed position in JS) */
         #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu {
-            position: absolute !important;
-            top: 0 !important;
-            left: 260px !important;
-            width: 200px !important;
             background: #0f172a !important;
             border: 1px solid #334155 !important;
             border-left: 3px solid #38bdf8 !important;
             border-radius: 0 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
             padding: 4px 0 !important;
             margin-left: 0 !important;
-            display: block !important;
-            z-index: 9999 !important;
+            width: 200px !important;
         }
 
         #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu a {
@@ -916,6 +956,7 @@ add_action('admin_head', function() {
             font-size: 13px !important;
             color: #cbd5e1 !important;
             border-radius: 0 !important;
+            display: block !important;
         }
 
         #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu a:hover {
@@ -966,18 +1007,13 @@ add_action('admin_head', function() {
         }
 
         body.folded #adminmenu li.menu-top:hover .wp-submenu {
-            position: absolute !important;
-            top: 0 !important;
-            left: 72px !important;
-            width: 200px !important;
             background: #0f172a !important;
             border: 1px solid #334155 !important;
             border-left: 3px solid #38bdf8 !important;
             border-radius: 0 !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
             padding: 4px 0 !important;
-            z-index: 9999 !important;
-            display: block !important;
+            width: 200px !important;
         }
 
         body.folded #adminmenu li.menu-top:hover .wp-submenu a {
@@ -1044,6 +1080,101 @@ add_action('admin_head', function() {
                     imgDiv.innerHTML = svgContent;
                 }
             });
+
+            // Flyout submenu positioning for closed top-level menu items on hover
+            document.querySelectorAll('#adminmenu li.menu-top').forEach(function(li) {
+                var submenu = li.querySelector('.wp-submenu');
+                if (!submenu) return;
+
+                li.addEventListener('mouseenter', function() {
+                    if (!li.classList.contains('wp-has-current-submenu') && !li.classList.contains('wp-menu-open')) {
+                        var rect = li.getBoundingClientRect();
+                        var sidebarWidth = document.body.classList.contains('folded') ? 72 : 260;
+                        submenu.style.setProperty('position', 'fixed', 'important');
+                        submenu.style.setProperty('top', rect.top + 'px', 'important');
+                        submenu.style.setProperty('left', sidebarWidth + 'px', 'important');
+                        submenu.style.setProperty('z-index', '99999', 'important');
+                        submenu.style.setProperty('display', 'block', 'important');
+                    }
+                });
+
+                li.addEventListener('mouseleave', function() {
+                    if (!li.classList.contains('wp-has-current-submenu') && !li.classList.contains('wp-menu-open')) {
+                        submenu.style.removeProperty('position');
+                        submenu.style.removeProperty('top');
+                        submenu.style.removeProperty('left');
+                        submenu.style.removeProperty('z-index');
+                        submenu.style.removeProperty('display');
+                    }
+                });
+            });
+
+            // Highlight open page active tab and scroll it into view within the sidebar
+            function highlightAndScrollActiveTab() {
+                var menuWrap = document.querySelector('#adminmenuwrap');
+                if (!menuWrap) return;
+
+                var currentUrl = window.location.href;
+                var currentPathSearch = window.location.pathname + window.location.search;
+
+                var activeSubItem = document.querySelector('#adminmenu .wp-submenu li.current a, #adminmenu .wp-submenu a.current, #adminmenu .wp-submenu a[aria-current="page"]');
+
+                if (!activeSubItem) {
+                    var links = document.querySelectorAll('#adminmenu a[href]');
+                    var bestMatch = null;
+                    var bestMatchLen = 0;
+
+                    links.forEach(function(link) {
+                        var href = link.getAttribute('href');
+                        if (!href || href === '#' || href.indexOf('javascript:') === 0) return;
+
+                        var linkUrl = link.href;
+                        if (currentUrl === linkUrl || currentPathSearch.endsWith(href)) {
+                            if (href.length > bestMatchLen) {
+                                bestMatch = link;
+                                bestMatchLen = href.length;
+                            }
+                        } else {
+                            var cleanHref = href.replace(/^.*\/\/[^\/]+/, '');
+                            if (cleanHref && currentPathSearch.indexOf(cleanHref) !== -1) {
+                                if (cleanHref.length > bestMatchLen) {
+                                    bestMatch = link;
+                                    bestMatchLen = cleanHref.length;
+                                }
+                            }
+                        }
+                    });
+
+                    if (bestMatch) {
+                        var parentLi = bestMatch.closest('li');
+                        if (parentLi) parentLi.classList.add('current');
+                        bestMatch.classList.add('current');
+
+                        var topMenuLi = bestMatch.closest('li.menu-top');
+                        if (topMenuLi) {
+                            topMenuLi.classList.add('wp-has-current-submenu', 'wp-menu-open');
+                            var topLink = topMenuLi.querySelector('> a');
+                            if (topLink) topLink.classList.add('wp-has-current-submenu');
+                        }
+                        activeSubItem = bestMatch;
+                    }
+                }
+
+                var activeTopItem = document.querySelector('#adminmenu li.menu-top.current, #adminmenu li.menu-top.wp-has-current-submenu, #adminmenu li.menu-top.wp-menu-open');
+
+                var targetItem = activeSubItem || activeTopItem;
+                if (targetItem && menuWrap) {
+                    setTimeout(function() {
+                        var menuRect = menuWrap.getBoundingClientRect();
+                        var itemRect = targetItem.getBoundingClientRect();
+                        if (itemRect.top < menuRect.top + 60 || itemRect.bottom > menuRect.bottom - 20) {
+                            targetItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                        }
+                    }, 150);
+                }
+            }
+
+            highlightAndScrollActiveTab();
         });
     </script><?php
 });
