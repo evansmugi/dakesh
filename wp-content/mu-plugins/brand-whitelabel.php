@@ -284,6 +284,11 @@ add_filter('login_headertext', function() {
 });
 
 /**
+ * 1b. Remove Language Selector from Login Page
+ */
+add_filter('login_display_language_dropdown', '__return_false');
+
+/**
  * 2. Remove WordPress Logo & Links from Admin Bar
  */
 add_action('admin_bar_menu', function($wp_admin_bar) {
@@ -1146,12 +1151,26 @@ add_action('admin_head', function() {
                     var sidebarWidth = isFolded ? 72 : 260;
 
                     submenu.style.setProperty('position', 'fixed', 'important');
-                    submenu.style.setProperty('top', rect.top + 'px', 'important');
-                    submenu.style.setProperty('left', (sidebarWidth - 2) + 'px', 'important');
-                    submenu.style.setProperty('z-index', '999999', 'important');
                     submenu.style.setProperty('display', 'block', 'important');
                     submenu.style.setProperty('opacity', '1', 'important');
                     submenu.style.setProperty('pointer-events', 'auto', 'important');
+                    submenu.style.setProperty('z-index', '999999', 'important');
+
+                    // Smart Viewport Collision Detection: Open upwards if clipping at bottom
+                    var windowHeight = window.innerHeight;
+                    var submenuHeight = submenu.offsetHeight || 200;
+                    var calculatedTop = rect.top;
+
+                    if (rect.top + submenuHeight > windowHeight - 12) {
+                        // Open upwards aligned with bottom of menu item
+                        calculatedTop = rect.bottom - submenuHeight;
+                        if (calculatedTop < 56) {
+                            calculatedTop = 56;
+                        }
+                    }
+
+                    submenu.style.setProperty('top', calculatedTop + 'px', 'important');
+                    submenu.style.setProperty('left', (sidebarWidth - 2) + 'px', 'important');
                 }
 
                 function scheduleCloseFlyout() {
@@ -2813,4 +2832,670 @@ add_action('admin_footer-index.php', function() {
     </script>
     <?php
 }, 9999);
+
+/**
+ * 12. High-End E-Commerce Home Page Shortcode Template [dakesh_home_template]
+ */
+add_shortcode('dakesh_home_template', function() {
+    ob_start();
+    
+    $categories = get_terms([
+        'taxonomy' => 'product_cat',
+        'hide_empty' => false,
+    ]);
+    
+    $products = function_exists('wc_get_products') ? wc_get_products([
+        'limit' => 12,
+        'status' => 'publish',
+        'orderby' => 'date',
+        'order' => 'DESC'
+    ]) : [];
+    ?>
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        .dakesh-home-wrapper {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            color: #0f172a;
+            line-height: 1.6;
+            background: #f8fafc;
+            margin: -20px -20px 0 -20px;
+        }
+        
+        /* ----------------------------------------------------
+           HERO BANNER (DARK CYBER-LUXURY GLASSMORPHISM)
+           ---------------------------------------------------- */
+        .dakesh-hero-banner {
+            position: relative;
+            background: #090d16;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.22) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(236, 72, 153, 0.18) 0px, transparent 50%),
+                linear-gradient(135deg, rgba(9, 13, 22, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%);
+            padding: 70px 40px;
+            overflow: hidden;
+            border-bottom: 3px solid #38bdf8;
+            color: #ffffff;
+        }
+
+        .dakesh-hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .dakesh-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-bottom: 24px;
+        }
+
+        .dakesh-hero-title {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .dakesh-hero-title span {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #f43f5e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dakesh-hero-desc {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 36px;
+            max-width: 600px;
+        }
+
+        .dakesh-hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dakesh-btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .dakesh-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.5);
+        }
+
+        .dakesh-btn-glass {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff !important;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 16px 28px;
+            border-radius: 8px;
+            text-decoration: none !important;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .dakesh-btn-glass:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #38bdf8;
+        }
+
+        .dakesh-hero-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .dakesh-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dakesh-stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: #38bdf8;
+        }
+
+        .dakesh-stat-lbl {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* ----------------------------------------------------
+           SECTION TITLE COMPONENT
+           ---------------------------------------------------- */
+        .dakesh-section {
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 24px;
+        }
+
+        .dakesh-section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+
+        .dakesh-section-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .dakesh-section-subtitle {
+            font-size: 15px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        /* ----------------------------------------------------
+           CATEGORY CARDS GRID
+           ---------------------------------------------------- */
+        .dakesh-cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .dakesh-cat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-decoration: none !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .dakesh-cat-card:hover {
+            transform: translateY(-6px);
+            border-color: #0284c7;
+            box-shadow: 0 20px 30px rgba(2, 132, 199, 0.12);
+        }
+
+        .dakesh-cat-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: #0284c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .dakesh-cat-card:hover .dakesh-cat-icon {
+            background: #0284c7;
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .dakesh-cat-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .dakesh-cat-count {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* ----------------------------------------------------
+           FEATURED PRODUCTS GRID (HIGH END CARDS)
+           ---------------------------------------------------- */
+        .dakesh-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+
+        .dakesh-prod-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .dakesh-prod-card:hover {
+            transform: translateY(-8px);
+            border-color: #38bdf8;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        .dakesh-prod-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: #f8fafc;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dakesh-prod-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .dakesh-prod-card:hover .dakesh-prod-img-wrap img {
+            transform: scale(1.08);
+        }
+
+        .dakesh-badge-sale {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+            z-index: 2;
+        }
+
+        .dakesh-prod-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .dakesh-prod-cat {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #0284c7;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .dakesh-prod-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 10px 0;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 40px;
+        }
+
+        .dakesh-prod-rating {
+            color: #f59e0b;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dakesh-prod-price {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: auto;
+            margin-bottom: 16px;
+        }
+
+        .dakesh-prod-btn {
+            background: #0f172a;
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .dakesh-prod-btn:hover {
+            background: #0284c7;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+        }
+
+        /* ----------------------------------------------------
+           FLASH DEALS BANNER
+           ---------------------------------------------------- */
+        .dakesh-flash-banner {
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: #ffffff;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            margin: 60px auto;
+            max-width: 1280px;
+        }
+
+        .dakesh-timer-box {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .dakesh-timer-unit {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 12px 18px;
+            text-align: center;
+        }
+
+        .dakesh-timer-num {
+            font-size: 26px;
+            font-weight: 800;
+            color: #38bdf8;
+        }
+
+        .dakesh-timer-lbl {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        /* ----------------------------------------------------
+           TRUST BADGES SECTION
+           ---------------------------------------------------- */
+        .dakesh-trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .dakesh-trust-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .dakesh-trust-icon {
+            font-size: 32px;
+            color: #0284c7;
+            background: #f0f9ff;
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dakesh-trust-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .dakesh-trust-desc {
+            font-size: 13px;
+            color: #64748b;
+        }
+    </style>
+
+    <div class="dakesh-home-wrapper">
+        <!-- Hero Banner -->
+        <div class="dakesh-hero-banner">
+            <div class="dakesh-hero-container">
+                <div>
+                    <div class="dakesh-hero-badge">⚡ Official Wholesale & Retail Portal</div>
+                    <h1 class="dakesh-hero-title">High Performance Supplies for <span>Kenya's Top Brands</span></h1>
+                    <p class="dakesh-hero-desc">Discover 100% authentic electronics, household goods, beauty products, and kitchen staples delivered directly to your doorstep with instant M-Pesa checkout.</p>
+                    <div class="dakesh-hero-actions">
+                        <a href="#featured-products" class="dakesh-btn-primary">🛍️ SHOP CATALOGUE</a>
+                        <a href="#categories" class="dakesh-btn-glass">BROWSE CATEGORIES</a>
+                    </div>
+                </div>
+
+                <div class="dakesh-hero-card">
+                    <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-top:0;">🔥 Live Order Fulfillment</h3>
+                    <p style="font-size: 14px; color: #94a3b8; margin-bottom: 20px;">Dispatching daily orders from our Nairobi central warehouse.</p>
+                    
+                    <div style="background: rgba(30,41,59,0.8); padding: 16px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-bottom: 16px;">
+                        <div style="font-size: 13px; font-weight: 700; color: #f8fafc;">Express Nairobi Delivery</div>
+                        <div style="font-size: 12px; color: #94a3b8;">Same-day dispatch for orders placed before 3:00 PM</div>
+                    </div>
+
+                    <div class="dakesh-stat-grid">
+                        <div>
+                            <div class="dakesh-stat-val">32+</div>
+                            <div class="dakesh-stat-lbl">Seeded Products</div>
+                        </div>
+                        <div>
+                            <div class="dakesh-stat-val">300+</div>
+                            <div class="dakesh-stat-lbl">Variations</div>
+                        </div>
+                        <div>
+                            <div class="dakesh-stat-val">100%</div>
+                            <div class="dakesh-stat-lbl">KEBS Genuine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="dakesh-section" id="categories">
+            <div class="dakesh-section-header">
+                <div>
+                    <h2 class="dakesh-section-title">Shop By Department</h2>
+                    <div class="dakesh-section-subtitle">Browse curated product lines for home and corporate needs</div>
+                </div>
+            </div>
+
+            <div class="dakesh-cat-grid">
+                <?php
+                $cat_icons = [
+                    'Electronics' => '⚡',
+                    'Personal Care' => '🧴',
+                    'Household' => '🧺',
+                    'Foodstuffs' => '🌾',
+                    'Beverages' => '🥤'
+                ];
+                if (!empty($categories)):
+                    foreach ($categories as $cat):
+                        $icon = '📦';
+                        foreach ($cat_icons as $k => $v) {
+                            if (stripos($cat->name, $k) !== false) {
+                                $icon = $v;
+                                break;
+                            }
+                        }
+                        $link = get_term_link($cat);
+                ?>
+                    <a href="<?php echo esc_url($link); ?>" class="dakesh-cat-card">
+                        <div class="dakesh-cat-icon"><?php echo $icon; ?></div>
+                        <div class="dakesh-cat-name"><?php echo esc_html($cat->name); ?></div>
+                        <div class="dakesh-cat-count"><?php echo intval($cat->count); ?> Products Available</div>
+                    </a>
+                <?php
+                    endforeach;
+                endif;
+                ?>
+            </div>
+        </div>
+
+        <!-- Flash Deals Section -->
+        <div class="dakesh-flash-banner">
+            <div>
+                <div style="background: rgba(239,68,68,0.2); color:#fca5a5; font-weight:800; font-size:12px; display:inline-block; padding:4px 12px; border-radius:20px; text-transform:uppercase; margin-bottom:12px;">Limited Time Deal</div>
+                <h2 style="font-size:32px; font-weight:800; margin:0 0 10px 0; color:#ffffff;">Super Saver Flash Sale</h2>
+                <p style="color:#cbd5e1; margin:0;">Up to 25% OFF selected items across all categories. Offer ends soon!</p>
+            </div>
+            <div>
+                <div class="dakesh-timer-box">
+                    <div class="dakesh-timer-unit">
+                        <div class="dakesh-timer-num">08</div>
+                        <div class="dakesh-timer-lbl">Hours</div>
+                    </div>
+                    <div class="dakesh-timer-unit">
+                        <div class="dakesh-timer-num">42</div>
+                        <div class="dakesh-timer-lbl">Minutes</div>
+                    </div>
+                    <div class="dakesh-timer-unit">
+                        <div class="dakesh-timer-num">19</div>
+                        <div class="dakesh-timer-lbl">Seconds</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products Section -->
+        <div class="dakesh-section" id="featured-products">
+            <div class="dakesh-section-header">
+                <div>
+                    <h2 class="dakesh-section-title">Featured Products</h2>
+                    <div class="dakesh-section-subtitle">Top-rated items ready for instant nationwide shipping</div>
+                </div>
+            </div>
+
+            <div class="dakesh-products-grid">
+                <?php
+                if (!empty($products)):
+                    foreach ($products as $prod):
+                        $img_id = $prod->get_image_id();
+                        $img_src = $img_id ? wp_get_attachment_image_url($img_id, 'medium') : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=75';
+                        $cats = wp_get_post_terms($prod->get_id(), 'product_cat', ['fields' => 'names']);
+                        $cat_title = !empty($cats) ? $cats[0] : 'General';
+                ?>
+                    <div class="dakesh-prod-card">
+                        <div class="dakesh-prod-img-wrap">
+                            <span class="dakesh-badge-sale">SAVE 12%</span>
+                            <img src="<?php echo esc_url($img_src); ?>" alt="<?php echo esc_attr($prod->get_name()); ?>" loading="lazy">
+                        </div>
+                        <div class="dakesh-prod-content">
+                            <div class="dakesh-prod-cat"><?php echo esc_html($cat_title); ?></div>
+                            <h3 class="dakesh-prod-title"><?php echo esc_html($prod->get_name()); ?></h3>
+                            <div class="dakesh-prod-rating">★★★★★ <span>(5.0)</span></div>
+                            <div class="dakesh-prod-price">
+                                <?php echo $prod->get_price_html(); ?>
+                            </div>
+                            <a href="<?php echo esc_url($prod->get_permalink()); ?>" class="dakesh-prod-btn">
+                                🛒 VIEW OPTIONS
+                            </a>
+                        </div>
+                    </div>
+                <?php
+                    endforeach;
+                endif;
+                ?>
+            </div>
+        </div>
+
+        <!-- Trust Features -->
+        <div class="dakesh-section">
+            <div class="dakesh-trust-grid">
+                <div class="dakesh-trust-item">
+                    <div class="dakesh-trust-icon">🚚</div>
+                    <div>
+                        <div class="dakesh-trust-title">Express Delivery</div>
+                        <div class="dakesh-trust-desc">Nairobi same day & nationwide countrywide logistics.</div>
+                    </div>
+                </div>
+                <div class="dakesh-trust-item">
+                    <div class="dakesh-trust-icon">🛡️</div>
+                    <div>
+                        <div class="dakesh-trust-title">100% Genuine</div>
+                        <div class="dakesh-trust-desc">Sourced directly from manufacturers & certified.</div>
+                    </div>
+                </div>
+                <div class="dakesh-trust-item">
+                    <div class="dakesh-trust-icon">💳</div>
+                    <div>
+                        <div class="dakesh-trust-title">M-Pesa Express</div>
+                        <div class="dakesh-trust-desc">Instant STK push payment & invoice receipting.</div>
+                    </div>
+                </div>
+                <div class="dakesh-trust-item">
+                    <div class="dakesh-trust-icon">📞</div>
+                    <div>
+                        <div class="dakesh-trust-title">Corporate Support</div>
+                        <div class="dakesh-trust-desc">Dedicated account officers for bulk wholesale orders.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+});
+
 
