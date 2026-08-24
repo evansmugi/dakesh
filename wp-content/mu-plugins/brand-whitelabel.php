@@ -979,12 +979,11 @@ add_action('admin_head', function() {
         .fuse-flyout-submenu::before {
             content: '' !important;
             position: absolute !important;
-            top: -10px !important;
-            bottom: -10px !important;
-            left: -20px !important;
-            width: 25px !important;
+            top: -15px !important;
+            bottom: -15px !important;
+            left: -30px !important;
+            width: 35px !important;
             background: transparent !important;
-            z-index: -1 !important;
         }
 
         .fuse-flyout-submenu a {
@@ -1178,7 +1177,7 @@ add_action('admin_head', function() {
                         if (submenu) {
                             closeFlyoutNow(submenu);
                         }
-                    }, 200); // 200ms grace window while moving mouse into flyout box
+                    }, 400); // 400ms grace window while moving mouse into flyout box
                 }
 
                 function closeFlyoutNow(sub) {
