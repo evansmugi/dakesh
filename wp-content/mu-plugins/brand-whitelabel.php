@@ -422,6 +422,23 @@ add_action('admin_head', function() {
             transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
+        /* Remove cliché left border strips on all content cards, notices & sections */
+        .wrap .notice,
+        .wrap .notice-info,
+        .wrap .notice-success,
+        .wrap .notice-warning,
+        .wrap .notice-error,
+        .wrap .error,
+        .wrap .updated,
+        .postbox,
+        .card,
+        .fuse-hero-light,
+        .fuse-card-white,
+        .fuse-kpi-box {
+            border-left: 1px solid #e2e8f0 !important;
+            border-left-width: 1px !important;
+        }
+
         /* Absolutely Eliminate All White Glare / Sweeps / Gloss Pseudo Elements */
         #adminmenu li a::before, #adminmenu li a::after,
         #wpadminbar a::before, #wpadminbar a::after,
@@ -939,29 +956,46 @@ add_action('admin_head', function() {
             box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.1) !important;
         }
 
-        /* Hover Submenu for closed items (handled with fixed position in JS) */
-        #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu {
+        /* Hover Submenu for closed items (Image 2 Floating Fixed Flyout Box) */
+        #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open) .wp-submenu {
+            display: none !important;
+        }
+
+        .fuse-flyout-submenu {
             background: #0f172a !important;
             border: 1px solid #334155 !important;
             border-left: 3px solid #38bdf8 !important;
             border-radius: 0 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-            padding: 4px 0 !important;
-            margin-left: 0 !important;
-            width: 200px !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(56, 189, 248, 0.15) !important;
+            padding: 6px 0 !important;
+            min-width: 210px !important;
         }
 
-        #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu a {
-            padding: 8px 16px !important;
+        .fuse-flyout-submenu::before {
+            content: '' !important;
+            position: absolute !important;
+            top: -10px !important;
+            bottom: -10px !important;
+            left: -20px !important;
+            width: 25px !important;
+            background: transparent !important;
+            z-index: -1 !important;
+        }
+
+        .fuse-flyout-submenu a {
+            padding: 9px 18px !important;
             font-size: 13px !important;
             color: #cbd5e1 !important;
-            border-radius: 0 !important;
+            font-weight: 500 !important;
             display: block !important;
+            transition: all 0.15s ease !important;
+            text-decoration: none !important;
         }
 
-        #adminmenu li.menu-top:not(.wp-has-current-submenu):not(.wp-menu-open):hover .wp-submenu a:hover {
+        .fuse-flyout-submenu a:hover {
             background: rgba(56, 189, 248, 0.15) !important;
             color: #38bdf8 !important;
+            font-weight: 700 !important;
         }
 
         /* -------------------------------------------------------------------------
@@ -1081,32 +1115,76 @@ add_action('admin_head', function() {
                 }
             });
 
-            // Flyout submenu positioning for closed top-level menu items on hover
+            // Bulletproof Floating Flyout Submenus (Image 2 style) with mouseover bridge & delay
+            var flyoutTimer = null;
+            var currentFlyoutSubmenu = null;
+
             document.querySelectorAll('#adminmenu li.menu-top').forEach(function(li) {
                 var submenu = li.querySelector('.wp-submenu');
                 if (!submenu) return;
 
-                li.addEventListener('mouseenter', function() {
-                    if (!li.classList.contains('wp-has-current-submenu') && !li.classList.contains('wp-menu-open')) {
-                        var rect = li.getBoundingClientRect();
-                        var sidebarWidth = document.body.classList.contains('folded') ? 72 : 260;
-                        submenu.style.setProperty('position', 'fixed', 'important');
-                        submenu.style.setProperty('top', rect.top + 'px', 'important');
-                        submenu.style.setProperty('left', sidebarWidth + 'px', 'important');
-                        submenu.style.setProperty('z-index', '99999', 'important');
-                        submenu.style.setProperty('display', 'block', 'important');
-                    }
-                });
+                submenu.classList.add('fuse-flyout-submenu');
 
-                li.addEventListener('mouseleave', function() {
-                    if (!li.classList.contains('wp-has-current-submenu') && !li.classList.contains('wp-menu-open')) {
-                        submenu.style.removeProperty('position');
-                        submenu.style.removeProperty('top');
-                        submenu.style.removeProperty('left');
-                        submenu.style.removeProperty('z-index');
-                        submenu.style.removeProperty('display');
+                function openFlyout() {
+                    if (flyoutTimer) {
+                        clearTimeout(flyoutTimer);
+                        flyoutTimer = null;
+                    }
+
+                    if (li.classList.contains('wp-has-current-submenu') || li.classList.contains('wp-menu-open')) {
+                        return;
+                    }
+
+                    if (currentFlyoutSubmenu && currentFlyoutSubmenu !== submenu) {
+                        closeFlyoutNow(currentFlyoutSubmenu);
+                    }
+
+                    currentFlyoutSubmenu = submenu;
+
+                    var rect = li.getBoundingClientRect();
+                    var isFolded = document.body.classList.contains('folded');
+                    var sidebarWidth = isFolded ? 72 : 260;
+
+                    submenu.style.setProperty('position', 'fixed', 'important');
+                    submenu.style.setProperty('top', rect.top + 'px', 'important');
+                    submenu.style.setProperty('left', (sidebarWidth - 2) + 'px', 'important');
+                    submenu.style.setProperty('z-index', '999999', 'important');
+                    submenu.style.setProperty('display', 'block', 'important');
+                    submenu.style.setProperty('opacity', '1', 'important');
+                    submenu.style.setProperty('pointer-events', 'auto', 'important');
+                }
+
+                function scheduleCloseFlyout() {
+                    flyoutTimer = setTimeout(function() {
+                        if (submenu) {
+                            closeFlyoutNow(submenu);
+                        }
+                    }, 200); // 200ms grace window while moving mouse into flyout box
+                }
+
+                function closeFlyoutNow(sub) {
+                    sub.style.removeProperty('position');
+                    sub.style.removeProperty('top');
+                    sub.style.removeProperty('left');
+                    sub.style.removeProperty('z-index');
+                    sub.style.removeProperty('display');
+                    sub.style.removeProperty('opacity');
+                    sub.style.removeProperty('pointer-events');
+                    if (currentFlyoutSubmenu === sub) {
+                        currentFlyoutSubmenu = null;
+                    }
+                }
+
+                li.addEventListener('mouseenter', openFlyout);
+                li.addEventListener('mouseleave', scheduleCloseFlyout);
+
+                submenu.addEventListener('mouseenter', function() {
+                    if (flyoutTimer) {
+                        clearTimeout(flyoutTimer);
+                        flyoutTimer = null;
                     }
                 });
+                submenu.addEventListener('mouseleave', scheduleCloseFlyout);
             });
 
             // Highlight open page active tab and scroll it into view within the sidebar
@@ -2206,20 +2284,23 @@ add_action('admin_footer-index.php', function() {
             color: #0f172a;
         }
 
-        /* Executive Horizon Header (New Original Design - No Top Strip) */
+        /* Executive Horizon Header (Think Different - Clean Ambient Mesh Card, No Left Strip) */
         .fuse-hero-light {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
-            border: 1px solid #e2e8f0;
-            border-left: 6px solid #2563eb;
-            border-radius: 18px;
-            padding: 26px 34px;
-            margin-bottom: 28px;
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 60%, #f1f5f9 100%);
+            background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 55%),
+                              radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.04) 0px, transparent 55%);
+            border: 1px solid #e2e8f0 !important;
+            border-left: none !important;
+            border-radius: 20px !important;
+            padding: 28px 36px !important;
+            margin-bottom: 28px !important;
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05), 0 2px 6px rgba(0, 0, 0, 0.02) !important;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 24px;
             position: relative;
+            overflow: hidden;
         }
 
         .fuse-horizon-badge {
