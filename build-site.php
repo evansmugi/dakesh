@@ -7,6 +7,7 @@
  */
 
 define('ABSPATH', __DIR__ . '/');
+ini_set('memory_limit', '512M');
 $_SERVER['HTTP_HOST'] = 'dakesh.test';
 $_SERVER['REQUEST_SCHEME'] = 'https';
 require_once ABSPATH . 'wp-load.php';
@@ -62,7 +63,8 @@ $kit_settings = [
 
 update_post_meta(12, '_elementor_page_settings', $kit_settings);
 update_option('elementor_active_kit', 12);
-echo "  [OK] Default Kit configured with Gold & Obsidian tokens.\n\n";
+update_option('site_icon', 15);
+echo "  [OK] Default Kit configured with Gold & Obsidian tokens & Favicon (ID 15).\n\n";
 
 // ─── 2. BUILD GLOBAL HEADER TEMPLATE ──────────────────────────────────
 echo "[2/8] Building Global Header Theme Builder Template...\n";
@@ -91,8 +93,8 @@ if (!empty($existing_headers)) {
 $header_html = '
 <header class="dakesh-header">
   <div class="dakesh-header-container">
-    <a href="' . home_url('/') . '" class="dakesh-logo">
-      DAKESH <span>SUPPLIES</span>
+    <a href="' . home_url('/') . '" class="dakesh-logo" style="display:inline-flex;align-items:center;">
+      <img src="https://dakesh.test/wp-content/uploads/2026/08/Dakesh-Logo-2-03.png" alt="DAKESH SUPPLIES" style="height:96px;width:auto;display:block;background:#FFFFFF;padding:8px 20px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.35);object-fit:contain;">
     </a>
     <ul class="dakesh-nav">
       <li><a href="' . home_url('/') . '" class="' . (is_front_page() ? 'active' : '') . '">Home</a></li>
@@ -115,7 +117,9 @@ $header_html = '
 <div class="dakesh-drawer-overlay"></div>
 <div class="dakesh-mobile-drawer">
   <div style="display:flex;justify-content:space-between;align-items:center;">
-    <span class="dakesh-logo" style="font-size:1.3rem;">DAKESH <span>SUPPLIES</span></span>
+    <span class="dakesh-logo" style="display:inline-flex;align-items:center;">
+      <img src="https://dakesh.test/wp-content/uploads/2026/08/Dakesh-Logo-2-03.png" alt="DAKESH SUPPLIES" style="height:72px;width:auto;display:block;background:#FFFFFF;padding:6px 14px;border-radius:8px;object-fit:contain;">
+    </span>
     <button type="button" class="dakesh-drawer-close" style="background:none;border:none;color:#FFF;font-size:1.5rem;cursor:pointer;">✕</button>
   </div>
   <ul class="dakesh-mobile-nav">
@@ -153,14 +157,19 @@ $footer_html = '
 <footer class="dakesh-footer">
   <div class="dakesh-footer-container">
     <div class="dakesh-footer-col">
-      <div class="dakesh-logo" style="margin-bottom:16px;">DAKESH <span>SUPPLIES</span></div>
+      <div class="dakesh-logo" style="margin-bottom:24px;">
+        <a href="' . home_url('/') . '" style="display:inline-flex;align-items:center;">
+          <img src="https://dakesh.test/wp-content/uploads/2026/08/Dakesh-Logo-2-03.png" alt="DAKESH SUPPLIES" style="height:108px;width:auto;display:block;background:#FFFFFF;padding:8px 24px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.35);object-fit:contain;">
+        </a>
+      </div>
       <p style="color:var(--dakesh-text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px;">
         Kenya’s premier luxury digital marketplace. Discover handpicked electronics, premium home appliances, personal care essentials, and top-tier consumer products delivered straight to your door.
       </p>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:0.88rem;color:var(--dakesh-text-body);">
-        <div>📍 <strong>Address:</strong> Dakesh Plaza, Commercial Center, Nairobi</div>
-        <div>📞 <strong>Phone:</strong> +254 700 000 000</div>
-        <div>✉️ <strong>Email:</strong> support@dakeshsupplies.co.ke</div>
+        <div>📍 <strong>Location:</strong> Ramgarhia Hall Plaza, Shop Nos. B18 & B 19</div>
+        <div>📞 <strong>Phone:</strong> 0708 380 822</div>
+        <div>✉️ <strong>Email:</strong> sales@dakeshsupplies.co.ke</div>
+        <div>📮 <strong>Address:</strong> P. O. Box 17033 - 00100</div>
       </div>
     </div>
 
@@ -599,21 +608,26 @@ $contact_html = '
     <!-- Contact Info Cards -->
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div class="glass-card" style="padding:24px;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">📍</div>
+        <h4 style="font-size:1.1rem;margin-bottom:4px;">Location</h4>
+        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">Ramgarhia Hall Plaza, Shop Nos. B18 & B 19</p>
+      </div>
+      <div class="glass-card" style="padding:24px;">
         <div style="font-size:1.8rem;margin-bottom:8px;">📞</div>
         <h4 style="font-size:1.1rem;margin-bottom:4px;">Phone & WhatsApp</h4>
-        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">+254 700 000 000</p>
+        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">0708 380 822</p>
         <span style="font-size:0.78rem;color:var(--dakesh-gold-primary);">Mon - Sat: 8:00 AM - 6:00 PM</span>
       </div>
       <div class="glass-card" style="padding:24px;">
         <div style="font-size:1.8rem;margin-bottom:8px;">✉️</div>
         <h4 style="font-size:1.1rem;margin-bottom:4px;">Email Support</h4>
-        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">support@dakeshsupplies.co.ke</p>
+        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">sales@dakeshsupplies.co.ke</p>
         <span style="font-size:0.78rem;color:var(--dakesh-gold-primary);">Average response time: &lt; 2 hours</span>
       </div>
       <div class="glass-card" style="padding:24px;">
-        <div style="font-size:1.8rem;margin-bottom:8px;">📍</div>
-        <h4 style="font-size:1.1rem;margin-bottom:4px;">Headquarters</h4>
-        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">Dakesh Plaza, Commercial District, Nairobi, Kenya</p>
+        <div style="font-size:1.8rem;margin-bottom:8px;">📮</div>
+        <h4 style="font-size:1.1rem;margin-bottom:4px;">Postal Address</h4>
+        <p style="color:var(--dakesh-text-muted);font-size:0.9rem;margin:0;">P. O. Box 17033 - 00100</p>
       </div>
     </div>
 

@@ -241,6 +241,18 @@ a.aq-btn-secondary,
   color: var(--dakesh-gold-primary);
 }
 
+.dakesh-logo img {
+  max-height: 96px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.dakesh-logo:hover img {
+  transform: scale(1.03);
+}
+
 .dakesh-nav {
   display: flex;
   align-items: center;
