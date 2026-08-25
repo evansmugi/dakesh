@@ -58,8 +58,9 @@
   --dakesh-transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Global Reset & Dark Theme Overrides */
-html, body {
+/* Global Reset, Dark Theme Overrides & Single Scrollbar Lock */
+html,
+html.wp-toolbar {
   background-color: var(--dakesh-bg-main) !important;
   color: var(--dakesh-text-body);
   font-family: var(--dakesh-font-body);
@@ -67,9 +68,50 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+body,
+body.admin-bar,
+#page,
+.site,
+.site-content,
+.site-main,
+.elementor,
+.elementor-location-header,
+.elementor-location-footer,
+.elementor-page,
+.elementor-element,
+.e-con,
+.e-con-inner,
+.elementor-widget,
+.elementor-widget-container,
+.elementor-widget-html,
+.dakesh-footer,
+.dakesh-footer-container,
+.dakesh-header,
+#content,
+main,
+header,
+footer,
+section {
+  background-color: transparent;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+body {
+  background-color: var(--dakesh-bg-main) !important;
+  min-height: 100vh !important;
+  position: relative !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -242,11 +284,27 @@ a.aq-btn-secondary,
 }
 
 .dakesh-logo img {
-  max-height: 96px;
-  width: auto;
-  display: block;
-  object-fit: contain;
+  height: 96px !important;
+  max-height: 120px !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
   transition: transform 0.3s ease;
+}
+
+.dakesh-footer .dakesh-logo img {
+  height: 108px !important;
+  max-height: 140px !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.dakesh-mobile-drawer .dakesh-logo img {
+  height: 72px !important;
+  max-height: 90px !important;
+  width: auto !important;
+  display: block !important;
 }
 
 .dakesh-logo:hover img {
@@ -402,20 +460,26 @@ a.aq-btn-secondary,
 }
 
 /* ==========================================================================
-   GLOBAL FOOTER - 100% FULL VIEWPORT WIDTH EDGE-TO-EDGE
+   GLOBAL FOOTER - 100% FULL WIDTH WITHOUT BREAKOUT OVERFLOW
    ========================================================================== */
 
+.elementor-location-footer,
+footer.elementor-location-footer,
 .dakesh-footer {
   background: var(--dakesh-bg-surface) !important;
   border-top: 1px solid var(--dakesh-border-subtle) !important;
   padding: 80px 0 30px 0 !important;
   margin-top: 80px !important;
   position: relative !important;
-  width: 100vw !important;
-  left: 50% !important;
-  right: 50% !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  left: auto !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
   box-sizing: border-box !important;
 }
 
@@ -424,8 +488,8 @@ a.aq-btn-secondary,
   margin: 0 auto !important;
   padding: 0 24px !important;
   display: grid !important;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr !important;
-  gap: 40px !important;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 40px;
 }
 
 /* ==========================================================================
@@ -943,8 +1007,13 @@ html, body, html.wp-toolbar {
    ========================================================================== */
 
 @media (max-width: 1024px) {
+  .dakesh-footer {
+    padding: 50px 0 24px 0 !important;
+    margin-top: 50px !important;
+  }
   .dakesh-footer-container {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
   }
   .dakesh-cart-wrapper,
   .dakesh-account-wrapper {
@@ -959,16 +1028,41 @@ html, body, html.wp-toolbar {
 }
 
 @media (max-width: 640px) {
+  .dakesh-footer {
+    padding: 40px 0 20px 0 !important;
+    margin-top: 40px !important;
+  }
   .dakesh-footer-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    padding: 0 16px !important;
+  }
+  .dakesh-footer-col {
+    text-align: left;
+  }
+  .dakesh-footer-col .dakesh-logo img {
+    height: 70px !important;
+    max-height: 80px !important;
+  }
+  .dakesh-newsletter-form {
+    flex-direction: column !important;
+  }
+  .dakesh-newsletter-form button {
+    width: 100% !important;
   }
   .dakesh-product-details {
     padding: 14px;
   }
   .dakesh-footer-bottom {
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
+    flex-direction: column !important;
+    gap: 16px !important;
+    text-align: center !important;
+    margin-top: 36px !important;
+    padding-top: 20px !important;
+  }
+  .dakesh-footer-bottom div:last-child {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
   }
 }
 

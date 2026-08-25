@@ -154,7 +154,7 @@ echo "[3/8] Building Global Footer Theme Builder Template...\n";
 
 $footer_id = 304;
 $footer_html = '
-<footer class="dakesh-footer">
+<div class="dakesh-footer">
   <div class="dakesh-footer-container">
     <div class="dakesh-footer-col">
       <div class="dakesh-logo" style="margin-bottom:24px;">
@@ -224,7 +224,7 @@ $footer_html = '
       <a href="#">Cookie Preferences</a>
     </div>
   </div>
-</footer>
+</div>
 ';
 
 $footer_elements = [

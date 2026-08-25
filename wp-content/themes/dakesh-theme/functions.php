@@ -35,7 +35,7 @@ function dakesh_theme_enqueue_assets() {
         'dakesh-luxury-commerce',
         get_stylesheet_directory_uri() . '/assets/css/dakesh-luxury-commerce.css',
         ['dakesh-theme'],
-        '1.0.0'
+        '1.0.5'
     );
 
     // Dakesh Master Luxury Commerce JS
