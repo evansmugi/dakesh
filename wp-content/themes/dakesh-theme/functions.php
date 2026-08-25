@@ -35,7 +35,7 @@ function dakesh_theme_enqueue_assets() {
         'dakesh-luxury-commerce',
         get_stylesheet_directory_uri() . '/assets/css/dakesh-luxury-commerce.css',
         ['dakesh-theme'],
-        '1.0.5'
+        '1.0.6'
     );
 
     // Dakesh Master Luxury Commerce JS
@@ -43,7 +43,7 @@ function dakesh_theme_enqueue_assets() {
         'dakesh-commerce-js',
         get_stylesheet_directory_uri() . '/assets/js/dakesh-commerce.js',
         ['jquery'],
-        '1.0.0',
+        '1.0.1',
         true
     );
 
@@ -126,4 +126,31 @@ function dakesh_ensure_pages_config() {
     update_option('woocommerce_myaccount_page_id', 26);
 }
 add_action('init', 'dakesh_ensure_pages_config');
+
+/**
+ * 7. Early Theme Initialization (Prevent FOUC)
+ */
+add_action('wp_head', function() {
+    ?>
+    <script>
+    (function() {
+        var savedTheme = localStorage.getItem('dakesh_theme_mode') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+    </script>
+    <?php
+}, 1);
+
+/**
+ * 8. Universal Floating Theme Switcher Button
+ */
+add_action('wp_footer', function() {
+    ?>
+    <button id="dakesh-theme-toggle" class="dakesh-theme-toggle-btn" aria-label="Toggle Theme Mode" title="Switch Light / Dark Theme">
+        <span class="dakesh-toggle-icon dakesh-icon-sun">☀️</span>
+        <span class="dakesh-toggle-icon dakesh-icon-moon">🌙</span>
+        <span class="dakesh-toggle-tooltip">Switch Theme</span>
+    </button>
+    <?php
+}, 999);
 

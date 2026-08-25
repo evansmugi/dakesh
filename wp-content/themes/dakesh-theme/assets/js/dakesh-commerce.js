@@ -19,6 +19,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // 1b. Universal Theme Switcher (Dark / Light Mode)
+  const themeToggleBtn = document.getElementById('dakesh-theme-toggle');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', function () {
+      var currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      var nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      try {
+        localStorage.setItem('dakesh_theme_mode', nextTheme);
+      } catch (e) {}
+      if (typeof window.showDakeshToast === 'function') {
+        window.showDakeshToast('Switched to ' + nextTheme.toUpperCase() + ' Mode');
+      }
+    });
+  }
+
   // 2. Mobile Menu Drawer Navigation
   const mobileToggle = document.querySelector('.dakesh-mobile-toggle');
   const mobileDrawer = document.querySelector('.dakesh-mobile-drawer');
