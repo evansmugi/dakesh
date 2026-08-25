@@ -1609,78 +1609,71 @@ add_action('wp_head', function() {
     if (is_admin_bar_showing()) {
         ?>
         <style type="text/css">
-            #wpadminbar {
-                background: rgba(15, 23, 42, 0.88) !important;
-                backdrop-filter: blur(20px) saturate(180%) !important;
-                -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
-                font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-                height: 54px !important;
-                min-height: 54px !important;
-                display: flex !important;
-                align-items: center !important;
+            html, body, html.wp-toolbar {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
             }
-            #wpadminbar::before {
-                content: '' !important;
-                position: absolute !important;
+            #wpadminbar {
+                position: fixed !important;
                 top: 0 !important;
-                left: 0 !important;
                 right: 0 !important;
-                height: 2px !important;
-                background: linear-gradient(90deg, #38bdf8 0%, #818cf8 35%, #c084fc 70%, #f43f5e 100%) !important;
-                z-index: 100000 !important;
+                left: auto !important;
+                width: auto !important;
+                max-width: 100vw !important;
+                height: 42px !important;
+                min-height: 42px !important;
+                background: rgba(11, 15, 23, 0.95) !important;
+                -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+                backdrop-filter: blur(20px) saturate(180%) !important;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.3) !important;
+                border-left: 1px solid rgba(212, 175, 55, 0.3) !important;
+                border-bottom-left-radius: 12px !important;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7) !important;
+                opacity: 0.25 !important;
+                transform: translateY(-34px) !important;
+                transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                z-index: 999999 !important;
+                overflow: hidden !important;
+            }
+            #wpadminbar:hover,
+            #wpadminbar:focus-within {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+                overflow: visible !important;
             }
             #wpadminbar .quicklinks {
-                height: 54px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                height: 42px !important;
+                padding: 0 12px !important;
             }
             #wpadminbar .quicklinks > ul {
                 display: flex !important;
                 align-items: center !important;
-                height: 54px !important;
+                justify-content: flex-end !important;
+                height: 42px !important;
                 margin: 0 !important;
                 padding: 0 !important;
-            }
-            #wpadminbar .quicklinks > ul > li {
-                float: none !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                height: 54px !important;
-                margin: 0 !important;
             }
             #wpadminbar .ab-item, #wpadminbar a.ab-item {
                 color: #cbd5e1 !important;
                 font-weight: 600 !important;
-                font-size: 12.5px !important;
-                height: 38px !important;
-                line-height: 38px !important;
-                padding: 0 14px !important;
+                font-size: 12px !important;
+                height: 32px !important;
+                line-height: 32px !important;
+                padding: 0 12px !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 white-space: nowrap !important;
-                box-sizing: border-box !important;
-                border-radius: 20px !important;
+                border-radius: 6px !important;
             }
             #wpadminbar .ab-item:hover, #wpadminbar a.ab-item:hover {
                 color: #ffffff !important;
-                background: rgba(30, 41, 59, 0.9) !important;
+                background: rgba(212, 175, 55, 0.2) !important;
             }
             #wpadminbar .avatar, #wpadminbar .ab-icon {
                 display: none !important;
-            }
-            #wpadminbar #wp-admin-bar-user-info .display-name {
-                color: #ffffff !important;
-            }
-            html {
-                margin-top: 54px !important;
-            }
-            @media screen and (max-width: 782px) {
-                #wpadminbar {
-                    height: 54px !important;
-                }
-                html {
-                    margin-top: 54px !important;
-                }
             }
         </style>
         <?php
